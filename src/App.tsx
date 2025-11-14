@@ -2,82 +2,121 @@ import "./App.css";
 import React, { useState } from "react";
 
 const App = () => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [contact, setContact] = useState("");
-  const [gender, setGender] = useState("male");
-  const [subjects, setSubjects] = useState({
-    english: true,
-    maths: false,
-    physics: false,
+  const [personalDetails, setPersonalDetails] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    contact: "",
+    gender: "",
+    subjects: {
+      english: true,
+      math: false,
+      physics: false,
+    },
+    uploadResume: "",
+    url: "",
+    techSelection: "",
+    about: "",
   });
-  const [resume, setResume] = useState("");
-  const [url, setUrl] = useState<string>("");
-  const [selectedOption, setSelectedOption] = useState("");
-  const [about, setAbout] = useState("");
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log(
-      firstName,
-      lastName,
-      email,
-      contact,
-      gender,
-      selectedOption,
-      subjects,
-      resume,
-      url,
-      about
-    );
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setPersonalDetails((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSubjectChange = (sub: string) => {
-    setSubjects((prev) => ({
+    setPersonalDetails((prev) => ({
       ...prev,
-      [sub]: !prev[sub as keyof typeof prev],
+      subjects: {
+        ...prev.subjects,
+        [sub]: !prev.subjects[sub as keyof typeof prev.subjects],
+      },
     }));
   };
-  const handleReset = () => {
-    setFirstName("");
-    setLastName("");
-    setEmail("");
-    setContact("");
-    setGender("");
-    setSubjects({
-      english: true,
-      maths: false,
-      physics: false,
-    });
-    setResume("");
-    setUrl("");
-    setSelectedOption("");
-    setAbout("");
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPersonalDetails((prev) => ({
+        ...prev,
+        uploadResume: file.name,
+      }));
+    }
   };
+
+  const handleReset = () => {
+    setPersonalDetails({
+      firstName: "",
+      lastName: "",
+      email: "",
+      contact: "",
+      gender: "",
+      subjects: {
+        english: true,
+        math: false,
+        physics: false,
+      },
+      uploadResume: "",
+      url: "",
+      techSelection: "",
+      about: "",
+    });
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log("Submitted", personalDetails);
+  };
+
+  const techOptions = [
+    {
+      label: "Beginners",
+      items: [
+        { label: "HTML", value: "1" },
+        { label: "CSS", value: "2" },
+        { label: "JavaScript", value: "3" },
+      ],
+    },
+    {
+      label: "Advance",
+      items: [
+        { label: "React", value: "4" },
+        { label: "Node", value: "5" },
+        { label: "Express", value: "6" },
+        { label: "MongoDB", value: "7" },
+      ],
+    },
+  ];
 
   return (
     <div className="App">
       <h1>Form in React</h1>
       <fieldset>
         <form action="#" method="get" onSubmit={handleSubmit}>
-          <label htmlFor="firstname">First Name*</label>
+          <label htmlFor="firstName">First Name*</label>
           <input
             type="text"
-            name="firstname"
-            id="firstname"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
+            name="firstName"
+            id="firstName"
+            value={personalDetails.firstName}
+            onChange={handleChange}
             placeholder="Enter First Name"
             required
           />
-          <label htmlFor="lastname">Last Name*</label>
+          <label htmlFor="lastName">Last Name*</label>
           <input
             type="text"
-            name="lastname"
-            id="lastname"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
+            name="lastName"
+            id="lastName"
+            value={personalDetails.lastName}
+            onChange={handleChange}
             placeholder="Enter Last Name"
             required
           />
@@ -86,8 +125,8 @@ const App = () => {
             type="email"
             name="email"
             id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={personalDetails.email}
+            onChange={handleChange}
             placeholder="Enter email"
             required
           />
@@ -96,125 +135,77 @@ const App = () => {
             type="tel"
             name="contact"
             id="contact"
-            value={contact}
-            onChange={(e) => setContact(e.target.value)}
+            value={personalDetails.contact}
+            onChange={handleChange}
             placeholder="Enter Mobile number"
             required
           />
-          <label htmlFor="gender">Gender*</label>
-          <input
-            type="radio"
-            name="gender"
-            value="male"
-            id="male"
-            checked={gender === "male"}
-            onChange={(e) => setGender(e.target.value)}
-          />
-          Male
-          <input
-            type="radio"
-            name="gender"
-            value="female"
-            id="female"
-            checked={gender === "female"}
-            onChange={(e) => setGender(e.target.value)}
-          />
-          Female
-          <input
-            type="radio"
-            name="gender"
-            value="other"
-            id="other"
-            checked={gender === "other"}
-            onChange={(e) => setGender(e.target.value)}
-          />
-          Other
-          <label htmlFor="lang">Your best Subject</label>
-          <input
-            type="checkbox"
-            name="lang"
-            id="english"
-            checked={subjects.english === true}
-            onChange={(e) => handleSubjectChange("english")}
-          />
-          English
-          <input
-            type="checkbox"
-            name="lang"
-            id="maths"
-            checked={subjects.maths === true}
-            onChange={(e) => handleSubjectChange("maths")}
-          />
-          Maths
-          <input
-            type="checkbox"
-            name="lang"
-            id="physics"
-            checked={subjects.physics === true}
-            onChange={(e) => handleSubjectChange("physics")}
-          />
-          Physics
-          <label htmlFor="file">Upload Resume*</label>
-          <input
-            type="file"
-            name="file"
-            id="file"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              const file = e.target.files?.[0];
-              if (file) {
-                setResume(file.name);
-              }
-            }}
-            placeholder="Enter Upload File"
-            required
-          />
-          <label htmlFor="url">Enter URL*</label>
+          <label>Gender*</label>
+          {["male", "female", "other"].map((g) => (
+            <label key={g}>
+              <input
+                type="radio"
+                name="gender"
+                value={g}
+                checked={personalDetails.gender === g}
+                onChange={handleChange}
+              />
+              {g.charAt(0).toUpperCase() + g.slice(1)}
+            </label>
+          ))}
+          <label>Your best Subject</label>
+          {Object.entries(personalDetails.subjects).map(([key, value]) => (
+            <label key={key}>
+              <input
+                type="checkbox"
+                checked={value}
+                onChange={() => handleSubjectChange(key)}
+              />
+              {key.charAt(0).toUpperCase() + key.slice(1)}
+            </label>
+          ))}
+          <label>Upload Resume*</label>
+          <input type="file" onChange={handleFileChange} required />
+          <label>Enter URL*</label>
           <input
             type="url"
             name="url"
-            id="url"
-            onChange={(e) => setUrl(e.target.value)}
+            value={personalDetails.url}
+            onChange={handleChange}
             placeholder="Enter url"
             required
           />
           <label>Select your choice</label>
           <select
-            name="select"
-            id="select"
-            value={selectedOption}
-            onChange={(e) => setSelectedOption(e.target.value)}
+            name="techSelection"
+            value={personalDetails.techSelection}
+            onChange={handleChange}
+            required
           >
-            <option value="" disabled selected={selectedOption === ""}>
-              Select your Ans
-            </option>
-            <optgroup label="Beginers">
-              <option value="1">HTML</option>
-              <option value="2">CSS</option>
-              <option value="3">JavaScript</option>
-            </optgroup>
-            <optgroup label="Advance">
-              <option value="4">React</option>
-              <option value="5">Node</option>
-              <option value="6">Express</option>
-              <option value="t">MongoDB</option>
-            </optgroup>
+            <option value="">Select your Ans</option>
+
+            {techOptions.map((group) => (
+              <optgroup key={group.label} label={group.label}>
+                {group.items.map((item) => (
+                  <option key={item.value} value={item.value}>
+                    {item.label}
+                  </option>
+                ))}
+              </optgroup>
+            ))}
           </select>
-          <label htmlFor="about">About</label>
+          <label>About</label>
           <textarea
             name="about"
-            id="about"
-            cols={30}
-            rows={10}
-            onChange={(e) => setAbout(e.target.value)}
+            value={personalDetails.about}
+            onChange={handleChange}
             placeholder="About your self"
             required
           ></textarea>
-          <button type="reset" value="reset" onClick={handleReset}>
+          <button type="reset" onClick={handleReset}>
             Reset
           </button>
-          <button type="submit" value="Submit">
-            Submit
-          </button>
+          <button type="submit">Submit</button>
         </form>
       </fieldset>
     </div>
